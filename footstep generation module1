@@ -1,0 +1,67 @@
+# REAL-TIME FOOTSTEP POWER GENERATION GRAPH
+# Dynamic Running Graph Simulation
+
+import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.animation import FuncAnimation
+
+# CREATE FIGURE
+fig, ax = plt.subplots(figsize=(10, 5))
+
+# EMPTY DATA LISTS
+x_data = []
+y_data = []
+
+# CREATE LINE
+line, = ax.plot([], [], lw=2)
+
+# GRAPH SETTINGS
+ax.set_xlim(0, 100)
+ax.set_ylim(-2, 2)
+
+ax.set_title("Real-Time Footstep Power Generation")
+ax.set_xlabel("Time")
+ax.set_ylabel("Generated Current")
+
+ax.grid(True)
+
+# INITIALIZE GRAPH
+def init():
+    line.set_data([], [])
+    return line,
+
+# UPDATE FUNCTION
+def update(frame):
+
+    # APPEND NEW VALUES
+    x_data.append(frame)
+
+    # SIMULATED SENSOR VALUE
+    y = np.sin(frame * 0.1) + np.random.uniform(-0.2, 0.2)
+
+    y_data.append(y)
+
+    # KEEP ONLY LAST 100 VALUES
+    x_data[:] = x_data[-100:]
+    y_data[:] = y_data[-100:]
+
+    # UPDATE GRAPH
+    line.set_data(x_data, y_data)
+
+    # MOVE GRAPH WINDOW
+    ax.set_xlim(max(0, frame - 100), frame + 1)
+
+    return line,
+
+# ANIMATION
+ani = FuncAnimation(
+    fig,
+    update,
+    frames=np.arange(0, 1000),
+    init_func=init,
+    interval=100,
+    blit=True
+)
+
+# SHOW GRAPH
+plt.show()
